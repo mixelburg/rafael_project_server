@@ -1,0 +1,17 @@
+{
+  "name": "rafael_project_server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mongodb": "^3.6.4",
+    "mongoose": "^5.11.18"
+  }
+}
