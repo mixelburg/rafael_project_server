@@ -36,7 +36,8 @@ async function connectDB() {
     try{
         await client.connect()
         const attacks = client.db("attack_patterns").collection("attacks")
-        await attacks.createIndex({name: "text", description: "text", x_mitre_detection: "text"})
+        await attacks.createIndex({"$**": "text"})
+        console.log("[+] DB connected")
 
         const server = http.createServer((req, res) => {
             res.setHeader('Access-Control-Allow-Origin', '*');
