@@ -1,18 +1,10 @@
-const http = require("http")
-const port = 5000
-
-const {MongoClient} = require("mongodb")
+const { MongoClient } = require("mongodb")
+const Express = require("express")
 
 const uri = "mongodb+srv://admin:admin@cluster0.cs465.mongodb.net/attack_patterns?retryWrites=true&w=majority"
-
+const port = 5000
 
 async function findData(collection, searchData) {
-
-    searchData = searchData.trim()
-    if (searchData === "") return []
-
-    searchData = JSON.parse(searchData)
-
     const {key, lim} = searchData
     console.log("key", key)
     console.log("lim", lim)
@@ -39,32 +31,19 @@ async function connectDB() {
         await attacks.createIndex({"$**": "text"})
         console.log("[+] DB connected")
 
-        const server = http.createServer((req, res) => {
-            res.setHeader('Access-Control-Allow-Origin', '*');
+        const app = Express()
+        app.use(Express.json())
+        app.use(Express.urlencoded({extended: true}))
 
-            let body = "";
-            req.on('error', (err) => {
-                console.error(err);
-            }).on('data', (chunk) => {
-                body += chunk;
-            }).on('end', () => {
+        app.post("/find", ((req, res) => {
+            console.log(req.body)
+            findData(attacks, req.body).then(result => {
+                res.json(result)
+            })
+        }))
 
-
-                console.log("search:", body)
-
-                findData(attacks, body).then(result => {
-                    res.write(JSON.stringify(result))
-                    res.end()
-                })
-            });
-        })
-
-        server.listen(port, (error) => {
-            if (error) {
-                console.log("[!] Error occurred: ", error)
-            } else {
-                console.log(`[+] server is listening on port: ${port}`)
-            }
+        app.listen(port, () => {
+            console.log(`[+] listening on port ${port}`)
         })
 
     } catch (e) {
